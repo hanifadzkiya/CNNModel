@@ -1,7 +1,7 @@
 import copy
 
 import numpy as np
-from src.layers.base_layer import Layer
+from base_layer import Layer
 
 
 class Pooling(Layer):
