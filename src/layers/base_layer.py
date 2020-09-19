@@ -1,4 +1,4 @@
 class Layer:
 
-    def compute(self, input):
+    def forward(self, input):
         pass

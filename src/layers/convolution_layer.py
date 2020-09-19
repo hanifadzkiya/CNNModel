@@ -1,6 +1,5 @@
 from PIL import Image
 import numpy as np
-import random
 import time
 import sys
 np.set_printoptions(threshold=sys.maxsize)
