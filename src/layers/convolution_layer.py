@@ -12,6 +12,7 @@ class ConvolutionLayer:
         self.filter_size = filter_size
         self.filter=[]
         self.n_stride = n_stride
+        self.bias_filter=[]
         self.init_filter()
 
     def init_filter(self):
@@ -19,6 +20,7 @@ class ConvolutionLayer:
         filter_width = self.filter_size[0]
         filter_height = self.filter_size[1]
         filter_layer=np.random.randint(-1,2,size=(self.inputs_size[2],self.n_filter,filter_width,filter_height))
+        self.bias_filter = np.zeros((self.n_filter),dtype=int)
         self.filter = filter_layer
 
     def convolution(self, image_matrix):
@@ -50,16 +52,18 @@ class ConvolutionLayer:
                     b_sum = np.sum(np.dot(b[j:j+filter_height,i:i+filter_width],self.filter[2][k]))
                     total_sum = r_sum+g_sum+b_sum
                     result_matrix[i,j,k]+=total_sum
+                    # add bias
+                    result_matrix[i,j,k]+=self.bias_filter[k]
         return result_matrix
        
 image = Image.open('cat.9.jpg')
-# image = image.resize((200,200))
+image = image.resize((200,200))
 arr= np.array(image)
 # summarize some details about the image
 print(image.format)
 print(image.size)
 print(image.mode)
-conv_layer= ConvolutionLayer((320,425,3),1,3,(3,3),1)
+conv_layer= ConvolutionLayer((200,200,3),0,3,(3,3),1)
 start = time.time()
 ans= conv_layer.convolution(arr)
 print(ans[:,:,0])
