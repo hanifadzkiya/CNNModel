@@ -3,7 +3,7 @@ import copy
 from src.layers.base_layer import Layer
 import numpy as np
 
-from pooling import Pooling
+from layers.pooling import Pooling
 
 
 class MaxPooling(Pooling):

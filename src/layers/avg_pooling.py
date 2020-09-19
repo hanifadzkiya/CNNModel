@@ -1,4 +1,4 @@
-from pooling import Pooling
+from layers.pooling import Pooling
 import numpy as np
 
 
