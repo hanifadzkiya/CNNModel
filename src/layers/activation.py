@@ -5,7 +5,7 @@ from src.layers.base_layer import Layer
 
 
 class Activation(Layer):
-    def compute(self, input):
+    def forward(self, input):
         result = copy.deepcopy(input)
 
         for i in range(np.size(result, 0)):

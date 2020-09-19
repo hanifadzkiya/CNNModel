@@ -8,7 +8,7 @@ class Pooling(Layer):
     def __init__(self, pool_size):
         self.pool_size = pool_size
 
-    def compute(self, input):
+    def forward(self, input):
         matrix_output = []
         for matrix in input:
             size_matrix = (np.size(matrix, 0), np.size(matrix, 1))

@@ -19,5 +19,5 @@ input = []
 input.append(np.array(np.array([[10, 20, 30, 0], [8, 12, 2, 0], [34, 70, 37, 4], [112, 100, 25, 12]])))
 pooling = AvgPooling((2,2))
 print(input)
-print(pooling.compute(np.array(input)))
+print(pooling.forward(np.array(input)))
 
