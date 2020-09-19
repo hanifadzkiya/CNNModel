@@ -11,12 +11,7 @@ class MaxPooling(Pooling):
         super(MaxPooling, self).__init__(pool_size)
 
     def _find_pooling(self, matrix, loc):
-        result = 0
-        for i in range(self.pool_size[0]):
-            for j in range(self.pool_size[1]):
-                result = max(result, matrix[loc[0] + i, loc[1] + j])
-
-        return result
+        return np.amax(matrix[loc[0]:loc[0] + self.pool_size[0], loc[1]:loc[1] + self.pool_size[1]])
 
 
 input = []
