@@ -2,7 +2,8 @@ from PIL import Image
 import numpy as np
 import random
 import time
-
+import sys
+np.set_printoptions(threshold=sys.maxsize)
 
 class ConvolutionLayer:
     def __init__(self, inputs_size, padding, n_filter, filter_size, n_stride):
@@ -16,68 +17,57 @@ class ConvolutionLayer:
 
     def init_filter(self):
         filter_layer = []
-        filter_layer=np.random.randint(-1,1,size=(3,3,3,3))
-        # for i in range(self.n_filter):
-        #     kernel=[]
-        #     for j in range(self.filter_size[0]):
-        #         temp=[]
-        #         for k in range(self.filter_size[1]):
-        #             temp.append(random.randint(-1, 1))
-        #             kernel.append(temp)
-        #     filter_layer.append(kernel)
-        self.filter = filter_layer
-        print(self.filter)
-
-
-    def convolution(self, image_matrix):
-        r,g,b    = image_matrix[:, :, 0], image_matrix[:, :, 1], image_matrix[:, :, 2]
-        pad_length=self.padding
-        width=self.inputs_size[0]+(2*pad_length)
-        height=self.inputs_size[1]+(2*pad_length)
-        r_backup=np.pad(r,pad_length,'constant')
         filter_width = self.filter_size[0]
         filter_height = self.filter_size[1]
-        r_result=[]
-        g_result=[]
-        b_result=[]
-        output_size = int((width - filter_width + (2*pad_length))/self.n_stride)+1
-        result_matrix = np.zeros((output_size,output_size,3))
-        for i in range(width-filter_width+1):
-            r_temp=[]
-            g_temp=[]
-            b_temp=[]
-            for j in range(height-filter_height+1):
-                temp=[]
+        filter_layer=np.random.randint(-1,2,size=(self.inputs_size[2],self.n_filter,filter_width,filter_height))
+        self.filter = filter_layer
+
+    def convolution(self, image_matrix):
+        r,g,b    = image_matrix[:, :, 0], image_matrix[:, :, 1], image_matrix[:, :, 2]        
+        width=self.inputs_size[0]
+        height=self.inputs_size[1]
+        pad_length=self.padding
+        filter_width = self.filter_size[0]
+        filter_height = self.filter_size[1]
+        # calculate output size
+        output_width = int((width - filter_width + (2*pad_length))/self.n_stride)+1
+        output_height = int((height - filter_height + (2*pad_length))/self.n_stride)+1
+
+        # padding
+        width+=(2*pad_length)
+        height+=(2*pad_length)
+
+        r = np.pad(r,pad_length,'constant')
+        g = np.pad(g,pad_length,'constant')
+        b = np.pad(b,pad_length,'constant')
+
+        result_matrix = np.zeros((output_width,output_height,self.n_filter),dtype=int)
+
+        for i in range(0,width-filter_width+1,self.n_stride):
+            for j in range(0,height-filter_height+1,self.n_stride):
                 for k in range(self.n_filter):
                     r_sum = np.sum(np.dot(r[j:j+filter_height,i:i+filter_width],self.filter[0][k]))
                     g_sum = np.sum(np.dot(g[j:j+filter_height,i:i+filter_width],self.filter[1][k]))
                     b_sum = np.sum(np.dot(b[j:j+filter_height,i:i+filter_width],self.filter[2][k]))
-                    # print(i,j)
-                    # result_matrix[i][j][0]+=r_sum
-                    temp.append((r_sum+g_sum+b_sum))
-                r_temp.append(temp[0])
-                g_temp.append(temp[1])
-                b_temp.append(temp[2])
-            r_result.append(r_temp)
-            g_result.append(g_temp)
-            b_result.append(b_temp)
-        print(len(r_result))
-        print(r_result[0])
-        print(len(g_result))
-        print(len(b_result))
-
-
+                    total_sum = r_sum+g_sum+b_sum
+                    result_matrix[i,j,k]+=total_sum
+        return result_matrix
        
 image = Image.open('cat.9.jpg')
+# image = image.resize((200,200))
 arr= np.array(image)
 # summarize some details about the image
 print(image.format)
 print(image.size)
 print(image.mode)
-conv_layer= ConvolutionLayer((320,425),0,3,(3,3),1)
+conv_layer= ConvolutionLayer((320,425,3),1,3,(3,3),1)
 start = time.time()
-print("hello")
+ans= conv_layer.convolution(arr)
+print(ans[:,:,0])
+print(ans[:,:,1])
+print(ans[:,:,2])
 
-conv_layer.convolution(arr)
+
+
 end = time.time()
 print(end - start)
