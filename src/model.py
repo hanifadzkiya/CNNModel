@@ -15,11 +15,10 @@ class Model:
 
     def forward(self, input):
         output = copy.deepcopy(input)
-        for layer in self.layers:
+        for i, layer in enumerate(self.layers):
+            # print("Run Layer : " + str(i))
             output = layer.forward(output)
         return output
-
-
 model = Model()
 model.add(Activation())
 print(model.layers)
