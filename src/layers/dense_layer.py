@@ -1,5 +1,8 @@
 import numpy as np
 
+from src.layers.base_layer import Layer
+
+
 def relu(inputs):
     for i in range(len(inputs)):
         inputs[i] = 0 if inputs[i] < 0 else inputs[i]
@@ -10,7 +13,7 @@ def sigmoid(inputs):
         inputs[i] = 1/(1 + np.exp(-inputs))
     return inputs
 
-class DenseLayer:
+class DenseLayer(Layer):
     def __init__(self, units, activation):
         self.units = units
         self.weights = []
