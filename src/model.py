@@ -16,9 +16,6 @@ class Model:
     def forward(self, input):
         output = copy.deepcopy(input)
         for i, layer in enumerate(self.layers):
-            # print("Run Layer : " + str(i))
             output = layer.forward(output)
+            print("Input Shape After Layer : " + str(i) " adalah " + str(output.shape))
         return output
-model = Model()
-model.add(Activation())
-print(model.layers)

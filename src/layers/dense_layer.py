@@ -27,27 +27,18 @@ class DenseLayer(Layer):
         # Init weights
 
         inputs =inputs.flatten()
-        # print("input",inputs)
-
+        
         if len(self.weights) == 0:
             self.weights = np.random.rand(len(inputs), self.units)
-        # print("weight",self.weights)
             
         outputs = np.dot(inputs, self.weights) + self.bias
-        # print ("output11111",outputs)
-        
+
         if (self.activation == 'sigmoid'):
             outputs = sigmoid(outputs)
         else:
             outputs = relu(outputs)
-        # print ("output2",outputs)
         return outputs
     
-# masukan = [1,2,3,4,5]
-# model = DenseLayer(units=3, activation='relu')
-# model.build(masukan)
-# print(model.forward(masukan))
-
 
         
         
