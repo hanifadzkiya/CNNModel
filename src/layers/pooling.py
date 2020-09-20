@@ -33,7 +33,7 @@ class Pooling(Layer):
 
 
             # matrix_output.append(output)
-        print(matrix_output.shape)
+        # print(matrix_output.shape)
         return copy.deepcopy(np.array(matrix_output))
 
     def _find_pooling(self, matrix, loc):
