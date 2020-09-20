@@ -17,5 +17,5 @@ class Model:
         output = copy.deepcopy(input)
         for i, layer in enumerate(self.layers):
             output = layer.forward(output)
-            print("Input Shape After Layer : " + str(i) " adalah " + str(output.shape))
+            print("Input Shape After Layer : " + str(i) + " adalah " + str(output.shape))
         return output
