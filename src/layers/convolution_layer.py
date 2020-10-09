@@ -31,6 +31,7 @@ class ConvolutionLayer(Layer):
             self.inputs_size = image_matrix.shape
             self.init_filter()
 
+        print("aaa", self.inputs_size[2])
         width=self.inputs_size[0]
         height=self.inputs_size[1]
         pad_length=self.padding
@@ -63,3 +64,7 @@ class ConvolutionLayer(Layer):
                     # add bias
                     result_matrix[i,j,k] += self.bias_filter[k]
         return result_matrix
+
+    def backward(self, din=0):
+        prev_size = self.inputs_size
+        print(prev_size[0])
