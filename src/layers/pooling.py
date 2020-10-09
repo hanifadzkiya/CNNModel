@@ -8,8 +8,10 @@ class Pooling(Layer):
     def __init__(self, pool_size, n_stride):
         self.pool_size = pool_size
         self.n_stride = n_stride
+        self.input = []
 
     def forward(self, input):
+        self.input = copy.deepcopy(input)
         width = input.shape[0]
         height = input.shape[1]
         size_output = (((width - self.pool_size[0]) // self.n_stride)+1,
@@ -36,5 +38,3 @@ class Pooling(Layer):
         # print(matrix_output.shape)
         return copy.deepcopy(np.array(matrix_output))
 
-    def _find_pooling(self, matrix, loc):
-        pass

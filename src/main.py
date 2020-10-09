@@ -32,7 +32,7 @@ for images, labels in train_ds.take(1):
 
         
 model = Model()
-model.add(ConvolutionLayer(inputs_size=(100,100,3), padding=0, n_filter=3, filter_size=(5,5), n_stride=1))
+model.add(ConvolutionLayer(inputs_size=(100,100,3), padding=0, n_filter=2, filter_size=(5,5), n_stride=1))
 model.add(Activation())
 model.add(MaxPooling((3,3), 3))
 model.add(FlattenLayer())

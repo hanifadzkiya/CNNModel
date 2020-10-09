@@ -53,7 +53,7 @@ class DenseLayer(Layer):
         gradient = np.dot(-(target - self.outputs), dw_output)
 
         self.delta_w = momentum_rate * self.delta_w + np.dot(self.outputs, gradient)
-        self.bias = momentum_rate * self.delta_b + np.dot(self.outputs, gradient)
+        self.delta_b = momentum_rate * self.delta_b + np.dot(self.outputs, gradient)
 
         self.weights = self.delta_w - lrate * self.delta_w
         self.bias = self.bias - lrate * self.delta_b
