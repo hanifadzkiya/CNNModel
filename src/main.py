@@ -25,10 +25,12 @@ train_ds = image_dataset_from_directory(
         image_size=(100, 100))
 
 list_images = []
+list_labels=[]
 for images, labels in train_ds.take(1):
     print(labels[0].numpy())        
     for i in range(len(images)):
         list_images.append(images[i].numpy())
+        list_labels.append(labels[i].numpy())
 
         
 model = Model()
@@ -37,11 +39,11 @@ model.add(Activation())
 model.add(MaxPooling((3,3), 3))
 model.add(FlattenLayer())
 model.add(DenseLayer(units=10, activation='relu'))
-model.add(DenseLayer(units=2, activation='relu'))
-prediction = model.forward(list_images[0])
+model.add(DenseLayer(units=1, activation='sigmoid'))
+# for image in list_images:
+#     prediction = model.forward(image)
+#     print("prediction : " + str(prediction))
+# prediction = model.forward(list_images[0])
+model.fit(list_images,list_labels,2,3,0.1,0.1)
+# print("prediction : " + str(prediction))
 
-print(prediction)
-if (prediction[0] > prediction[1]):
-    print('kucing')
-else:
-    print('anjing')

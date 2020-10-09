@@ -13,6 +13,7 @@ class ConvolutionLayer(Layer):
         self.n_filter = n_filter
         self.filter_size = filter_size
         self.filter=None
+        self.dl_df=np.zeros(filter_size)
         self.n_stride = n_stride
         self.bias_filter=[]
         if inputs_size!=None:
@@ -31,13 +32,10 @@ class ConvolutionLayer(Layer):
         if self.filter is None:
             self.inputs_size = image_matrix.shape
             self.init_filter()
+        print("***", self.inputs_size)
 
         # simpan buat backward
         self.input = image_matrix
-
-        print(self.filter.shape)
-        print(self.filter)
-
 
         width=self.inputs_size[0]
         height=self.inputs_size[1]
@@ -71,27 +69,52 @@ class ConvolutionLayer(Layer):
                     # add bias
                     result_matrix[i,j,k] += self.bias_filter[k]
         return result_matrix
+    
+    def reset_delta(self):
+        self.dl_df=np.zeros(self.filter_size)
 
-    def backward(self, dl_dout=0, lrate=0.01, momentum_rate):
+    def update_weight(self, lrate):
+        self.filter -= lrate * self.dl_df
+
+    def backward(self, dl_dout=0, lrate=0.01, momentum_rate=0.1):
+        
         dl_din = np.zeros(self.inputs_size)              # loss gradient of the input to the convolution operation
-        dl_df = np.zeros(self.filter_size)               # loss gradient of filter
 
         idx_x = 0
         outx = 0
+        print(self.filter_size)
+        print(dl_dout.shape)
+        for f in range(self.n_filter):              # loop through all filters
+            tmp_y = out_y = 0
+            while tmp_y + self.filter_size[0] <= self.inputs_size[0]:
+                tmp_x = out_x = 0
+                while tmp_x + self.filter_size[1] <= self.inputs_size[1]:
+                    patch = self.input[tmp_y:tmp_y + self.size, tmp_x:tmp_x + self.size]
+                    dfilt[f] += np.sum(din[f, out_y, out_x] * patch, axis=0)
+                    dout[:, tmp_y:tmp_y + self.size, tmp_x:tmp_x + self.size] += din[f, out_y, out_x] * self.filters[f]
+                    tmp_x += self.stride
+                    out_x += 1
+                tmp_y += self.stride
+                out_y += 1
+
         while idx_x + self.filter_size[0] <= self.inputs_size[0]:
             idx_y = 0
             outy = 0
             while idx_y + self.filter_size[1] <= self.inputs_size[1]:
                 for k in range(self.n_filter):
                     mtrx_area = self.input[idx_x:idx_x + self.filter_size[0], idx_y:idx_y + self.filter_size[1], :]
-                    dl_df[:,k] += np.sum(dl_dout[outx, outy, :] * mtrx_area, axis=2)
+                    print("mtrx", mtrx_area.shape)
+                    print("dldout",dl_dout.shape)
+                    print(dl_dout[outx, outy, :])
+                    print(np.sum(dl_dout[outx, outy, :] * mtrx_area, axis=2).shape)
+                
+                    self.dl_df[:,k] += np.sum(dl_dout[outx, outy, :] * mtrx_area, axis=2)
                     dl_din[idx_x:idx_x + self.filter_size[0], idx_y:idx_y + self.filter_size[1], :] += dl_dout[outx, outy, :] * self.filter[:,k]
+                    
                 idx_y += self.n_stride
                 outy += 1
             idx_x += self.n_stride
             outx += 1
 
-        #update filter
-        self.filter -= lrate * dl_df
-        return dl_din                                         # return the loss gradient for this layer's inputs
-        
+        return dl_din   
+
