@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 
 from layers.base_layer import Layer
@@ -20,8 +22,9 @@ class DenseLayer(Layer):
         self.bias = np.zeros(units, dtype=float)
         self.activation = activation
         self.outputs = []
-        
 
+        self.delta_w = 0
+        self.delta_b = 0
         
     def forward(self, inputs):
         # Init weights
@@ -38,6 +41,24 @@ class DenseLayer(Layer):
         else:
             outputs = relu(outputs)
         return outputs
+
+    def backward(self, target, lrate, momentum_rate):
+        dw_output = np.zeros((len(target)))
+        if (self.activation == 'sigmoid'):
+            dw_output = self.outputs * (1 - self.outputs)
+        else:
+            for index, element in enumerate(target):
+                dw_output[index] *= 1 if self.outputs[index] >= 0 else 0
+
+        gradient = np.dot(-(target - self.outputs), dw_output)
+
+        self.delta_w = momentum_rate * self.delta_w + np.dot(self.outputs, gradient)
+        self.bias = momentum_rate * self.delta_b + np.dot(self.outputs, gradient)
+
+        self.weights = self.delta_w - lrate * self.delta_w
+        self.bias = self.bias - lrate * self.delta_b
+
+        return gradient
     
 
         
