@@ -14,8 +14,13 @@ class Model:
         self.layers = np.append(self.layers, layer)
 
     def forward(self, input):
-        output = copy.deepcopy(input)
+        self.output = copy.deepcopy(input)
         for i, layer in enumerate(self.layers):
-            output = layer.forward(output)
+            self.output = layer.forward(output)
             print("Input Shape After Layer : " + str(i) + " adalah " + str(output.shape))
-        return output
+        return self.output
+
+    def backward(self, target):
+        last_layer = target
+        for i, layer in enumerate(self.layers):
+            last_layer = layer.backward(last_layer)
