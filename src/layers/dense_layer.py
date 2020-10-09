@@ -42,15 +42,15 @@ class DenseLayer(Layer):
             outputs = relu(outputs)
         return outputs
 
-    def backward(self, target, lrate, momentum_rate):
-        dw_output = np.zeros((len(target)))
+    def backward(self, last_layer, lrate, momentum_rate):
+        dw_output = np.zeros((len(last_layer)))
         if (self.activation == 'sigmoid'):
             dw_output = self.outputs * (1 - self.outputs)
         else:
-            for index, element in enumerate(target):
+            for index, element in enumerate(last_layer):
                 dw_output[index] *= 1 if self.outputs[index] >= 0 else 0
 
-        gradient = np.dot(-(target - self.outputs), dw_output)
+        gradient = np.dot(-(last_layer - self.outputs), dw_output)
 
         self.delta_w = momentum_rate * self.delta_w + np.dot(self.outputs, gradient)
         self.bias = momentum_rate * self.delta_b + np.dot(self.outputs, gradient)
